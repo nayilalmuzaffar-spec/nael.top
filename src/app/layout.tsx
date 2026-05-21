@@ -1,4 +1,5 @@
 import React from "react";
+// @ts-ignore
 import "../index.css";
 
 interface LayoutProps {

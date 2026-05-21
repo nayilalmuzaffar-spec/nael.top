@@ -21,10 +21,12 @@ export default function SearchBar({ onNavigate }: Props) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleChange = (value: string) => {
+  const handleValueChange = (value: string) => {
     setQuery(value);
     if (value.trim()) {
-      setResults(searchPoems(value));
+      // @ts-ignore
+      const searchData = searchPoems(value) || [];
+      setResults(searchData);
       setIsOpen(true);
     } else {
       setResults([]);
@@ -32,55 +34,28 @@ export default function SearchBar({ onNavigate }: Props) {
     }
   };
 
-  const highlightMatch = (text: string, query: string) => {
-    if (!query.trim()) return text;
-    const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-    const parts = text.split(regex);
-    return parts.map((part, i) =>
-      regex.test(part) ? (
-        <span key={i} className="search-highlight">{part}</span>
-      ) : (
-        part
-      )
-    );
-  };
-
   return (
-    <div ref={ref} className="relative w-[120px] h-[48px]">
-      <div className="relative w-full h-full">
-        <img
-          src="https://nael.top/1/C.png"
-          alt="بحث"
-          className="w-full h-full object-contain opacity-80"
-        />
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => handleChange(e.target.value)}
-          onFocus={() => results.length > 0 && setIsOpen(true)}
-          placeholder="ابحث عن قصيدة"
-          className="search-input absolute inset-0 w-full h-full bg-transparent text-white text-center text-xs focus:outline-none px-2"
-        />
-      </div>
+    <div ref={ref} className="relative w-full max-w-md mx-auto">
+      <input
+        type="text"
+        value={query}
+        onChange={(e) => handleValueChange(e.target.value)}
+        placeholder="ابحث عن قصيدة..."
+        className="w-full px-4 py-2 text-right border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+      />
       {isOpen && results.length > 0 && (
-        <div className="search-dropdown" style={{ right: 0, left: 'auto', minWidth: '220px' }}>
-          {results.map((result, i) => (
+        <div className="absolute z-50 w-full mt-1 bg-white border rounded-lg shadow-lg max-h-60 overflow-y-auto text-right">
+          {results.map((res, index) => (
             <div
-              key={i}
-              className="search-item"
+              key={index}
               onClick={() => {
-                onNavigate?.(result.poem);
+                if (onNavigate) onNavigate(res.poem);
                 setIsOpen(false);
-                setQuery('');
               }}
+              className="px-4 py-2 cursor-pointer hover:bg-gray-100"
             >
-              <span className="poem-name">{highlightMatch(result.poem.name, query)}</span>
-              <span className="section-name">({result.poem.section})</span>
-              {result.matchLine !== result.poem.name && (
-                <div className="text-xs text-gray-400 mt-1">
-                  {highlightMatch(result.matchLine, query)}
-                </div>
-              )}
+              <div className="font-bold">{res.poem.title}</div>
+              <div className="text-sm text-gray-500 text-ellipsis overflow-hidden whitespace-nowrap">{res.matchLine}</div>
             </div>
           ))}
         </div>

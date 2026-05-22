@@ -1,24 +1,23 @@
 {
-  "name": "vite-react-typescript-starter",
+  
+  "name": "next-react-typescript-starter",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-    "scripts": {
+  "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3000",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
-
-    "dependencies": {
+  "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
     "lucide-react": "^0.344.0",
     "next": "^14.2.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
-  }
-,
+  },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
     "@types/node": "^25.9.1",
